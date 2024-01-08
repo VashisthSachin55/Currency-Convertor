@@ -27,8 +27,6 @@ for(let select of dropdowns){
     });
 }
 
-
-
 const updateExchangeRate = async()=>{
     let amount = document.querySelector(".amount input");
     let amtval = amount.value;
