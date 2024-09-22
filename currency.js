@@ -1,4 +1,4 @@
-const BASE_URL ="https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies";
+const BASE_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
 
 const dropdowns = document.querySelectorAll(".dropdown select");
 const btn = document.querySelector("form button");
@@ -6,57 +6,73 @@ const fromcurr = document.querySelector(".from select");
 const tocurr = document.querySelector(".to select");
 const msg = document.querySelector(".msg");
 
+// Populate dropdowns with currency codes
+for (let select of dropdowns) {
+    for (let currcode in countryList) {
+        let newOption = document.createElement("option");
+        newOption.innerText = currcode;
+        newOption.value = currcode;
 
-for(let select of dropdowns){
-    for(currcode in countryList){
-        let newoption = document.createElement("option");
-        newoption.innerText = currcode;
-        newoption.value = currcode;
-
-        if(select.name === "from" && currcode === "USD"){
-            newoption.selected = "selected";
+        // Set default values (USD to INR)
+        if (select.name === "from" && currcode === "USD") {
+            newOption.selected = "selected";
+        } else if (select.name === "to" && currcode === "INR") {
+            newOption.selected = "selected";
         }
-        else if(select.name === "to" && currcode === "INR"){
-            newoption.selected = "selected";
-        }
-        select.append(newoption);
+        select.append(newOption);
     }
 
-    select.addEventListener("change", (evt) =>{
+    // Add change event listener to update flags when currency changes
+    select.addEventListener("change", (evt) => {
         updateFlag(evt.target);
     });
 }
 
-const updateExchangeRate = async()=>{
-    let amount = document.querySelector(".amount input");
-    let amtval = amount.value;
-    if(amtval === "" || amtval < 1){
-        amtval = 1;
-        amount.value = "1";
+// Fetch and update the exchange rate
+const updateExchangeRate = async () => {
+    let amount = document.querySelector(".amount input").value;
+    if (amount === "" || amount < 1) {
+        amount = 1;
+        document.querySelector(".amount input").value = 1;
     }
-    const URL = `${BASE_URL}/${fromcurr.value.toLowerCase()}/${tocurr.value.toLowerCase()}.json`;
-    let response = await fetch(URL);
-    let data = await response.json();
-    let rate = data[tocurr.value.toLowerCase()];
-    
-    let finalamount = amtval * rate;
-    console.log(finalamount);
-    msg.innerText = `${amtval} ${fromcurr.value} = ${finalamount}${tocurr.value}`;
+
+    // API URL now fetches only fromCurrency data, and we extract toCurrency from the response
+    const URL = `${BASE_URL}/${fromcurr.value.toLowerCase()}.json`;
+    try {
+        let response = await fetch(URL);
+        let data = await response.json();
+        
+        // Extract the exchange rate using the new data structure
+        let rate = data[fromcurr.value.toLowerCase()][tocurr.value.toLowerCase()];
+        
+        if (!rate) {
+            msg.innerText = `Exchange rate not available for ${fromcurr.value} to ${tocurr.value}`;
+            return;
+        }
+
+        let finalAmount = amount * rate;
+        msg.innerText = `${amount} ${fromcurr.value} = ${finalAmount.toFixed(2)} ${tocurr.value}`;
+    } catch (error) {
+        msg.innerText = "Error fetching exchange rate.";
+        console.error("Error fetching the data:", error);
+    }
 };
 
-const updateFlag = (element) =>{
+// Update flag based on selected currency
+const updateFlag = (element) => {
     let currcode = element.value;
-    let coutnrycode = countryList[currcode];
-    let newsrc = `https://flagsapi.com/${coutnrycode}/flat/64.png`;
+    let countrycode = countryList[currcode];
+    let imgSrc = `https://flagsapi.com/${countrycode}/flat/64.png`;
     let img = element.parentElement.querySelector("img");
-    img.src = newsrc;
- };
+    img.src = imgSrc;
+};
 
-btn.addEventListener("click", (evt) =>{
+// Event listeners for fetching and displaying rates
+btn.addEventListener("click", (evt) => {
     evt.preventDefault();
     updateExchangeRate();
 });
 
-window.addEventListener("load", ()=>{
+window.addEventListener("load", () => {
     updateExchangeRate();
 });
