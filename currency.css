@@ -1,6 +1,7 @@
 *{
     margin: 0;
     padding: 0;
+
 }
 
 body{
@@ -8,11 +9,13 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    
 }
 .heading{
     margin-top: 30px;
+    align-items: center;
     text-align: center;
-    color: rgb(242, 15, 87);
+    color: rgb(24, 19, 20);
     font-size: 3rem;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -23,6 +26,7 @@ body{
     margin-bottom: 30px;
     margin-left: 40%;
     margin-right: 30%;
+  
     text-align: center;
     justify-content: center;
     background-color: rgb(214, 208, 201);
@@ -30,6 +34,8 @@ body{
     border-radius: 2rem;
     height: 30rem;
     width: 20rem;
+
+
 }
 h1{
     font-size: 2.25rem;
@@ -84,6 +90,7 @@ form input{
     display: flex;
     width: 6rem;
     border-radius: 0.5rem;
+   
     justify-content: center;
     align-items: center;
     border: 2px solid rgb(11, 11, 12);
